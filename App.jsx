@@ -1,34 +1,48 @@
-import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import CustomButton from './src/components/customButton';
-import CustomTextInput from './src/components/customTextInput';
+import Home from './src/screens/Home';
+import EditNote from './src/screens/EditNote';
+import AddNote from './src/screens/AddNote';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <CustomButton
-        backgroundColor="#DDD"
-        color="#39494f"
-        text="Custom Button"
-        width="100%"
-        onPress={() => {}}
-      />
-      <CustomTextInput
-        label="Custom Text"
-        multiline
-        numberOfLines={2}
-        onChange={() => {}}
-      />
-    </View>
-  );
+const CurrentPageWidget = ({ currentPage, setCurrentPage, noteList, addNote }) => {
+  switch(currentPage) {
+    case 'home':
+      return <Home noteList={noteList} setCurrentPage={setCurrentPage} />
+    case 'edit':
+      return <EditNote setCurrentPage={setCurrentPage} />
+    case 'add':
+      return <AddNote setCurrentPage={setCurrentPage} addNote={addNote} />
+    default:
+      return <Home noteList={noteList} setCurrentPage={setCurrentPage} />
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    gap: 10,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: 40,
-  },
-});
+export default function App() {
+  const [noteList, setNoteList] = useState([
+    {
+      id: 1,
+      title: 'Note Pertama',
+      desc: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+    },
+  ]);
+  const [currentPage, setCurrentPage] = useState('');
+
+  const addNote = ({ title, desc }) => {
+    const id = noteList.length > 0 ? noteList[noteList.length - 1].id + 1 : 1;
+
+    const note = {
+      id, title, desc,
+    };
+
+    setNoteList([ ...noteList, note ]);
+  }
+
+  return (
+      <CurrentPageWidget
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        noteList={noteList}
+        addNote={addNote}
+      />
+  );
+}
