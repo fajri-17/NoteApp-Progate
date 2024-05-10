@@ -1,8 +1,8 @@
-import CustomButton from "../components/customButton";
+import CustomButton from "../components/CustomButton";
 
 const { View, Text, FlatList, StyleSheet } = require("react-native");
 
-const NoteCard = ({ item, setCurrentPage }) => (
+const NoteCard = ({ item, setCurrentPage, deleteNote }) => (
    <View style={styles.card}>
       <Text style={styles.cardTitle}>{item.title}</Text>
       <Text>{item.desc}</Text>
@@ -21,13 +21,13 @@ const NoteCard = ({ item, setCurrentPage }) => (
             text="Hapus"
             fontSize={12}
             width={100}
-            onPress={() => {}}
+            onPress={() => {deleteNote(item.id)}}
          />
       </View>
    </View>
 )
 
-const Home = ({ noteList, setCurrentPage }) => {
+const Home = ({ noteList, setCurrentPage, deleteNote }) => {
    return (
       <View style={styles.container}>
          <CustomButton
@@ -37,12 +37,16 @@ const Home = ({ noteList, setCurrentPage }) => {
             width="100%"
             onPress={() => {setCurrentPage('add')}}
          />
-         <FlatList 
+         {noteList.length > 0 ? (
+            <FlatList 
             showsVerticalScrollIndicator={false}
             data={noteList}
-            renderItem={({ item }) => <NoteCard item={item} setCurrentPage={setCurrentPage} />}
+            renderItem={({ item }) => <NoteCard item={item} setCurrentPage={setCurrentPage} deleteNote={deleteNote} />}
             keyExtractor={(item) => item.id}
          />
+         ) : (
+            <Text style={styles.textNoteFound}>Tidak ada catatan...</Text>
+         )}
       </View>
    )
 }
@@ -53,7 +57,7 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       justifyContent: 'center',
       padding: 20,
-      marginTop: 10
+      marginTop: 10,
    },
    card: {
       borderWidth: 2,
@@ -72,6 +76,12 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-evenly',
       marginVertical: 5,
+   },
+   textNoteFound: {
+      textAlign: 'center',
+      marginTop: 30,
+      fontSize: 16,
+      fontWeight: 'bold'
    }
 })
 

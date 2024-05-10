@@ -4,16 +4,16 @@ import Home from './src/screens/Home';
 import EditNote from './src/screens/EditNote';
 import AddNote from './src/screens/AddNote';
 
-const CurrentPageWidget = ({ currentPage, setCurrentPage, noteList, addNote }) => {
+const CurrentPageWidget = ({ currentPage, setCurrentPage, noteList, addNote, deleteNote }) => {
   switch(currentPage) {
     case 'home':
-      return <Home noteList={noteList} setCurrentPage={setCurrentPage} />
+      return <Home noteList={noteList} setCurrentPage={setCurrentPage} deleteNote={deleteNote} />
     case 'edit':
       return <EditNote setCurrentPage={setCurrentPage} />
     case 'add':
       return <AddNote setCurrentPage={setCurrentPage} addNote={addNote} />
     default:
-      return <Home noteList={noteList} setCurrentPage={setCurrentPage} />
+      return <Home noteList={noteList} setCurrentPage={setCurrentPage} deleteNote={deleteNote} />
   }
 }
 
@@ -37,12 +37,18 @@ export default function App() {
     setNoteList([ ...noteList, note ]);
   }
 
+  const deleteNote = (noteId) => {
+    const updatedNotes = noteList.filter((note) => note.id !== noteId);
+    setNoteList(updatedNotes);
+  }
+
   return (
       <CurrentPageWidget
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         noteList={noteList}
         addNote={addNote}
+        deleteNote={deleteNote}
       />
   );
 }
