@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 import Home from './src/screens/Home';
 import EditNote from './src/screens/EditNote';
 import AddNote from './src/screens/AddNote';
 
-const CurrentPageWidget = ({ currentPage, setCurrentPage, noteList, addNote, deleteNote }) => {
+const CurrentPageWidget = ({ currentPage, setCurrentPage, noteList, addNote, deleteNote, findNote, selectedNote, editNote }) => {
   switch(currentPage) {
     case 'home':
-      return <Home noteList={noteList} setCurrentPage={setCurrentPage} deleteNote={deleteNote} />
+      return <Home noteList={noteList} setCurrentPage={setCurrentPage} deleteNote={deleteNote} findNote={findNote} />
     case 'edit':
-      return <EditNote setCurrentPage={setCurrentPage} />
+      return <EditNote setCurrentPage={setCurrentPage} selectedNote={selectedNote} editNote={editNote} />
     case 'add':
       return <AddNote setCurrentPage={setCurrentPage} addNote={addNote} />
     default:
-      return <Home noteList={noteList} setCurrentPage={setCurrentPage} deleteNote={deleteNote} />
+      return <Home noteList={noteList} setCurrentPage={setCurrentPage} deleteNote={deleteNote} findNote={findNote} />
   }
 }
 
@@ -26,6 +25,7 @@ export default function App() {
     },
   ]);
   const [currentPage, setCurrentPage] = useState('');
+  const [selectedNote, setSelectedNote] = useState(null);
 
   const addNote = ({ title, desc }) => {
     const id = noteList.length > 0 ? noteList[noteList.length - 1].id + 1 : 1;
@@ -35,6 +35,28 @@ export default function App() {
     };
 
     setNoteList([ ...noteList, note ]);
+  }
+
+  const findNote = (noteId) => {
+    const note = noteList.find((note) => note.id === noteId);
+    setSelectedNote(note);
+    setCurrentPage('edit');
+  }
+
+  const editNote = (noteId, updateNote) => {
+    const updatedNote = noteList.map((note) => {
+      if (note.id === noteId) {
+        return {
+          id: note.id,
+          title: updateNote.title,
+          desc: updateNote.desc,
+        }
+      }
+
+      return note;
+    });
+
+    setNoteList(updatedNote);
   }
 
   const deleteNote = (noteId) => {
@@ -48,7 +70,10 @@ export default function App() {
         setCurrentPage={setCurrentPage}
         noteList={noteList}
         addNote={addNote}
+        editNote={editNote}
         deleteNote={deleteNote}
+        findNote={findNote}
+        selectedNote={selectedNote}
       />
   );
 }
